@@ -1,78 +1,65 @@
 import "../App.css";
 import Counter from "./counter";
-import { useState } from "react";
+import { Candy, Order } from "../types";
 
-type Candy = { name: string; quantity: number; visibility: boolean };
+interface Props {
+  candies: Candy[];
+  onAddToCart: (candy: Candy) => void;
+  onIncrement: (candy: Candy) => void;
+  onDecrement: (candy: Candy) => void;
+  onCheckout: () => void;
+}
 
-const candyList: Candy[] = [
-  { name: "Gummy bears", quantity: 0, visibility: false },
-  { name: "Sour worms", quantity: 0, visibility: false },
-  { name: "Chocs combo", quantity: 0, visibility: false },
-  { name: "Macaroons", quantity: 0, visibility: false },
-  { name: "Lollipop", quantity: 0, visibility: false },
-  { name: "Ice-cream candy", quantity: 0, visibility: false },
-  { name: "Cola candy", quantity: 0, visibility: false },
-];
-
-const CandyList = () => {
-  const [candies, setCandies] = useState(candyList);
-
-  const getSelectedItem = (candy: Candy): [Candy[], Candy] => {
-    let currentSet: Candy[] = [...candyList];
-    let currentIndex = currentSet.findIndex((c) => c.name === candy.name);
-    return [currentSet, currentSet[currentIndex]];
-  };
-
-  const handleClick = (candy: Candy) => {
-    const [currentSet, selectedItem] = getSelectedItem(candy);
-    selectedItem.visibility = !selectedItem.visibility;
-    selectedItem.quantity += 1;
-    setCandies([...currentSet]);
-  };
-
-  const handleIncrement = (candy: Candy) => {
-    const [currentSet, selectedItem] = getSelectedItem(candy);
-    selectedItem.quantity += 1;
-    setCandies([...currentSet]);
-  };
-
-  const handleDecrement = (candy: Candy) => {
-    const [currentSet, selectedItem] = getSelectedItem(candy);
-    selectedItem.quantity -= 1;
-    if (!selectedItem.quantity) {
-      selectedItem.visibility = !selectedItem.visibility;
-      setCandies([...currentSet]);
-      return;
-    }
-    setCandies([...currentSet]);
-  };
-
+const CandyList = ({
+  candies,
+  onAddToCart,
+  onIncrement,
+  onDecrement,
+  onCheckout,
+}: Props) => {
   return (
-    <div className="col-12">
-      <ul className="list-group">
-        {candies.map((candy) => (
-          <li className="list-group-item text-start" key={candy.name}>
-            <div className="d-flex justify-content-between">
-              <h5 className="d-flex align-items-center">{candy.name}</h5>
-              {!candy.visibility && (
-                <button
-                  className="btn bg-purple"
-                  onClick={() => handleClick(candy)}
-                >
-                  Add to cart
-                </button>
-              )}
-              {candy.visibility && (
-                <Counter
-                  candy={candy}
-                  onIncrement={() => handleIncrement(candy)}
-                  onDecrement={() => handleDecrement(candy)}
-                />
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className=" mt-2 rounded">
+      <div className="row main-container">
+        <div className="col-12">
+          <h2 className="text-start ms-3">
+            <span className="purple">Candies</span>
+          </h2>
+          <ul className="list-group">
+            {candies.map((candy) => (
+              <li className="list-group-item text-start" key={candy.name}>
+                <div className="d-flex justify-content-between">
+                  <span className="d-flex align-items-center text-primary-emphasis fs-5">
+                    {candy.name}
+                  </span>
+                  {!candy.visibility && (
+                    <button
+                      className="btn bg-purple"
+                      onClick={() => onAddToCart(candy)}
+                    >
+                      Add to cart
+                    </button>
+                  )}
+                  {candy.visibility && (
+                    <Counter
+                      candy={candy}
+                      onIncrement={() => onIncrement(candy)}
+                      onDecrement={() => onDecrement(candy)}
+                    />
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="d-flex justify-content-end">
+            <button
+              className="btn bg-purple mt-3 me-3"
+              onClick={() => onCheckout()}
+            >
+              Checkout
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
